@@ -1,0 +1,15 @@
+# Ignore the virtual environment directory
+venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+
+# Other potential ignores
+.DS_Store
+.idea/           # Ignore PyCharm or other IDE settings
+.vscode/         # Ignore VSCode settings
