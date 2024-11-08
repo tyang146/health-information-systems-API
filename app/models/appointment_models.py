@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime
+from sqlalchemy import Column, Date, Integer, ForeignKey, Time
 from sqlalchemy.orm import relationship
 from app.models.base_models import Base, BaseModel
 
@@ -7,7 +7,8 @@ class Appointment(Base, BaseModel):
     
     patient_id = Column(Integer, ForeignKey("patients.id"))
     provider_id = Column(Integer, ForeignKey("providers.id"))
-    appointment_date_time = Column(DateTime)
+    date = Column(Date)
+    time = Column(Time)
     
     # Relationships
     patient = relationship("Patient", back_populates="appointments")

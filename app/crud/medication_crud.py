@@ -1,8 +1,19 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from app.models.medication_models import Medication
+from app.models.patient_models import Patient
 from app.schemas.medication_schemas import MedicationCreate
 
 def create_medication(db: Session, medication: MedicationCreate):
+    # Check if the patient exists
+    patient = db.query(Patient).filter(Patient.id == medication.patient_id).first()
+    if not patient:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Patient with ID {medication.patient_id} does not exist."
+        )
+    
+    # If no conflicts, create the medication
     db_medication = Medication(name=medication.name, dosage=medication.dosage, patient_id=medication.patient_id)
     db.add(db_medication)
     db.commit()

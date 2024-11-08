@@ -6,9 +6,6 @@ class ProviderBase(BaseModel):
     name: str
     specialty: str
 
-class ProviderCreate(ProviderBase):
-    pass
-
 class Provider(ProviderBase):
     id: int
     appointments: List[Appointment] = []

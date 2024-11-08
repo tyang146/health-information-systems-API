@@ -14,3 +14,6 @@ def get_patient_by_id(db: Session, patient_id: int):
 
 def get_all_patients(db: Session):
     return db.query(Patient).all()
+
+def get_patient_by_name(db: Session, name: str):
+    return db.query(Patient).filter(Patient.name.ilike(f"%{name}%")).all()

@@ -10,7 +10,7 @@ from app.db.session import get_db
 router = APIRouter()
 
 # Login endpoint to get the token
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=Token, include_in_schema=False)
 # use fastapi.security OAuth2PasswordRequestForm to make fastapi/swagger auth work
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user_in_db = get_user_by_username(db, username=form_data.username)
