@@ -2,7 +2,7 @@
 
 ## Technology Used
 - Python
-- 
+  
 ## Getting Started
 1. Clone repo
 2.     python -m venv venv
