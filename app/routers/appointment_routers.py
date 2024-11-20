@@ -13,12 +13,11 @@ router = APIRouter()
 def create_new_appointment(appointment: AppointmentCreate, db: Session = Depends(get_db)):
     return create_appointment(db=db, appointment=appointment)
 
-@router.get("/by_date", response_model=List[Appointment])
-def get_appointments_by_date_route(appointment_date: date, db: Session = Depends(get_db)):
+@router.get("/{appointment_date}", response_model=List[Appointment])
+def read_appointments_by_date(appointment_date: date, db: Session = Depends(get_db)):
     appointments = get_appointments_by_date(db=db, appointment_date=appointment_date)
     if not appointments:
         raise HTTPException(status_code=404, detail="No appointments found for this date.")
-    
     return appointments
 
 @router.get("/", response_model=List[Appointment])

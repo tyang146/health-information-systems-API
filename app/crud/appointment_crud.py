@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from sqlalchemy.orm import Session
 from app.models.appointment_models import Appointment
 from app.models.patient_models import Patient
@@ -28,38 +28,51 @@ def create_appointment(db: Session, appointment: AppointmentCreate):
     if appointment.date < today:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Appointment date cannot be in the past."
+            detail="Appointment date cannot be made in the past."
         )
 
     # Combine the date and time into a full datetime object for comparison
     appointment_datetime = datetime.combine(appointment.date, appointment.time)
 
-    # Check if an appointment already exists at the same time
-    conflicting_appointments = db.query(Appointment).filter(
-        Appointment.date == appointment.date,
-        Appointment.time == appointment.time
-    ).all()
-
-    if conflicting_appointments:
+    # Ensure the appointment time is within business hours (9:00 AM to 5:00 PM)
+    business_start = time(9, 0)  # 9:00 AM
+    business_end = time(17, 0)   # 5:00 PM
+    if not (business_start <= appointment.time <= business_end):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="An appointment already exists at the same time."
+            detail="Appointments must be scheduled between 9:00 AM and 5:00 PM."
         )
-
+    
     # Ensure appointments are at least 30 minutes apart
     thirty_minutes_before = appointment_datetime - timedelta(minutes=30)
     thirty_minutes_after = appointment_datetime + timedelta(minutes=30)
 
-    conflicting_appointments_within_timeframe = db.query(Appointment).filter(
+    # **Check if the same patient already has an appointment at around the given time**
+    conflicting_appointments_for_patient = db.query(Appointment).filter(
         (Appointment.date == appointment.date) &
+        (Appointment.patient_id == appointment.patient_id) &  # Same patient
         (Appointment.time >= thirty_minutes_before.time()) &
         (Appointment.time <= thirty_minutes_after.time())
+    ).all()
+
+    if conflicting_appointments_for_patient:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This patient already has an appointment scheduled around this time. Make sure appointments are at least 30 minutes apart."
+        )
+
+    # # Check if an appointment already exists for the provider at around the given time
+    conflicting_appointments_within_timeframe = db.query(Appointment).filter(
+        Appointment.date == appointment.date,  
+        Appointment.provider_id == appointment.provider_id,  # Same provider
+        ((Appointment.time <= thirty_minutes_after.time()) & 
+        (Appointment.time >= thirty_minutes_before.time()))  
     ).all()
 
     if conflicting_appointments_within_timeframe:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Appointments must be at least 30 minutes apart."
+            detail="An appointment already exists for this provider around this time. Choose a different time."
         )
 
     # If no conflicts, create the appointment

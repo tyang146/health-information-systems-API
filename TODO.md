@@ -5,5 +5,4 @@ perspective of a hospital
 - [] improve on medicine
   - split into medicine and medication
   - lots of fixing
-- [] add to patients; eg email address phone etc
 - [] test and validation check

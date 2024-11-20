@@ -1,19 +1,45 @@
-from pydantic import BaseModel, Field
+from datetime import date
 from typing import List, Literal
+from pydantic import BaseModel, validator
 from app.schemas.appointment_schemas import Appointment
-from app.schemas.medication_schemas import Medication
+import re
+
 
 class PatientBase(BaseModel):
     name: str
-    age: int = Field(..., gt=0, lt=200)  # Apply constraints using Field
-    gender: Literal['male', 'female', 'other']  # Restrict gender to 'male', 'female', or 'other'
+    date_of_birth: date  
+    gender: Literal['male', 'female', 'other']  # Restrict gender to specific values
+    phone_number: str
+
+    # Validator for date_of_birth
+    @validator("date_of_birth")
+    def validate_date_of_birth(cls, value):
+        today = date.today()
+        age = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
+        if age < 0:
+            raise ValueError("date_of_birth cannot be in the future.")
+        if age > 120:
+            raise ValueError("Patient age cannot exceed 120 years.")
+        return value
+
+    # Validator for phone_number
+    @validator("phone_number")
+    def validate_phone_number(cls, value):
+        # Regex pattern for phone numbers (e.g., +1-123-456-7890 or 1234567890)
+        phone_pattern = re.compile(r"^\+?1?\d{10,15}$")
+        if not phone_pattern.match(value):
+            raise ValueError(
+                "phone_number must be a valid phone number (e.g., +1234567890 or 1234567890)."
+            )
+        return value
+
 
 class PatientCreate(PatientBase):
     pass
 
+
 class Patient(PatientBase):
     id: int
-    medications: List[Medication] = [] 
     appointments: List[Appointment] = []
 
     class Config:

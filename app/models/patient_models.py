@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, String, Date
 from sqlalchemy.orm import relationship
 from app.models.base_models import Base, BaseModel
 
@@ -6,9 +6,9 @@ class Patient(Base, BaseModel):
     __tablename__ = "patients"
     
     name = Column(String, index=True)
-    age = Column(Integer)
+    date_of_birth = Column(Date)
     gender = Column(String)
+    phone_number = Column(String)
     
     # Relationships
-    medications = relationship("Medication", back_populates="patient", cascade="all, delete-orphan")
     appointments = relationship("Appointment", back_populates="patient", cascade="all, delete-orphan")
