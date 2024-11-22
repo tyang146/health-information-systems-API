@@ -3,13 +3,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.provider_schemas import Provider
-from app.crud.provider_crud import get_providers
+from app.crud.provider_crud import get_provider_by_id, get_providers
 
 router = APIRouter()
 
 @router.get("/{provider_id}", response_model=Provider)
 def read_provider_by_id(provider_id: int, db: Session = Depends(get_db)):
-    provider = get_providers(db=db, provider_id=provider_id)
+    provider = get_provider_by_id(db=db, provider_id=provider_id)
     if not provider:
         raise HTTPException(status_code=404, detail="Provider not found")
     return provider
