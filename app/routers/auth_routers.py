@@ -20,7 +20,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     access_token = create_access_token(data={"sub": form_data.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
-# # Login endpoint to get the token
+# # Login endpoint to get the token (without using OAuth2PasswordRequestForm)
 # @router.post("/login", response_model=Token)
 # def login(user: UserCreate, db: Session = Depends(get_db)):
 #     user_in_db = get_user_by_username(db, username=user.username)

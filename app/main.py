@@ -11,7 +11,7 @@ app = FastAPI(
     title="Health Info System API",
 )
 
-# Define the lifespan context manager: Initialize the database and import CSV data
+# Define the lifespan context manager: Use for initializing the database and seeding providers
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()  # Initialize database tables
@@ -51,5 +51,5 @@ def read_root():
 # Include routers with prefixes
 app.include_router(auth_routers.router, prefix="/auth", tags=["Auth"])
 app.include_router(patient_routers.router, prefix="/patients", tags=["Patients"])
-app.include_router(provider_routers.router, prefix="/providers", tags=["Providers"], dependencies=[Depends(get_current_user)])
+app.include_router(provider_routers.router, prefix="/providers", tags=["Providers"])
 app.include_router(appointment_routers.router, prefix="/appointments", tags=["Appointments"])

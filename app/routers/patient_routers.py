@@ -29,7 +29,7 @@ def read_patient_by_id(patient_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Patient not found")
     return patient
 
-# Get patients by name
+# Get patients by name and date of birth
 @router.get("/path_parameters_search/{name}/{date_of_birth}", response_model=list[Patient])
 def read_patients_by_name_and_dob(name: str, date_of_birth: date, db: Session = Depends(get_db)):
     providers = get_patient_by_name_and_dob(db=db, name=name, date_of_birth=date_of_birth)

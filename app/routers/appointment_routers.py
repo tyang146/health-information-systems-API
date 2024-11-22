@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.dependencies import get_current_user
-from app.schemas.appointment_schemas import Appointment, AppointmentCreate
-from app.crud.appointment_crud import create_appointment, get_appointments_by_date, get_all_appointments
+from app.schemas.appointment_schemas import Appointment, AppointmentCreate, AppointmentUpdate
+from app.crud.appointment_crud import create_appointment, delete_appointment_by_id, get_appointments_by_date, get_all_appointments, update_appointment_by_id
 
 router = APIRouter()
 
@@ -23,3 +23,18 @@ def read_appointments_by_date(appointment_date: date, db: Session = Depends(get_
 @router.get("/", response_model=List[Appointment])
 def read_appointments(db: Session = Depends(get_db)):
     return get_all_appointments(db=db)
+
+@router.delete("/{appointment_id}", response_model=Appointment, dependencies=[Depends(get_current_user)])
+def cancel_appointment_by_id(appointment_id: int, db: Session = Depends(get_db)):
+    appointment = delete_appointment_by_id(db=db, appointment_id=appointment_id)
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found.")
+    return appointment
+
+@router.put("/{appointment_id}", response_model=Appointment, dependencies=[Depends(get_current_user)])
+def change_appointment_by_id(appointment_id: int, appointment_data: AppointmentUpdate, db: Session = Depends(get_db)):
+    updated_appointment = update_appointment_by_id(db=db, appointment_id=appointment_id, appointment_data=appointment_data)
+    if not updated_appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found.")
+    return updated_appointment
+

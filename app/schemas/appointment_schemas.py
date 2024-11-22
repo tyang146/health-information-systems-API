@@ -12,7 +12,7 @@ class AppointmentBase(BaseModel):
     @field_validator('time')
     def validate_time(cls, v):
         # Convert the time to string and strip extra precision if any
-        time_str = v.isoformat()  # Get the string representation of time
+        time_str = v.isoformat()
 
         # Match the expected HH:MM format
         match = re.match(r"^(\d{2}):(\d{2})", time_str)
@@ -23,6 +23,9 @@ class AppointmentBase(BaseModel):
         raise ValueError('Time must be in the format HH:MM')
 
 class AppointmentCreate(AppointmentBase):
+    pass
+
+class AppointmentUpdate(AppointmentBase):
     pass
 
 class Appointment(AppointmentBase):
