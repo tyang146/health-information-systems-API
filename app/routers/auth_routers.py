@@ -20,16 +20,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     access_token = create_access_token(data={"sub": form_data.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
-# # Login endpoint to get the token (without using OAuth2PasswordRequestForm)
-# @router.post("/login", response_model=Token)
-# def login(user: UserCreate, db: Session = Depends(get_db)):
-#     user_in_db = get_user_by_username(db, username=user.username)
-#     if not user_in_db or not verify_password(user.password, user_in_db.hashed_password):
-#         raise HTTPException(status_code=400, detail="Invalid credentials")
-
-#     access_token = create_access_token(data={"sub": user.username})
-#     return {"access_token": access_token, "token_type": "bearer"}
-
 # Register new user endpoint
 @router.post("/register", response_model=User)
 def register(user: UserCreate, db: Session = Depends(get_db)):
@@ -39,3 +29,13 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 
     new_user = create_user(db, user)
     return new_user
+
+# # Login endpoint to get the token (without using OAuth2PasswordRequestForm)
+# @router.post("/login", response_model=Token)
+# def login(user: UserCreate, db: Session = Depends(get_db)):
+#     user_in_db = get_user_by_username(db, username=user.username)
+#     if not user_in_db or not verify_password(user.password, user_in_db.hashed_password):
+#         raise HTTPException(status_code=400, detail="Invalid credentials")
+
+#     access_token = create_access_token(data={"sub": user.username})
+#     return {"access_token": access_token, "token_type": "bearer"}

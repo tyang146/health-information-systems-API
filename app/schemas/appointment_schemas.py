@@ -1,5 +1,5 @@
 import re
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, ConfigDict
 from datetime import date, time
 
 class AppointmentBase(BaseModel):
@@ -31,5 +31,4 @@ class AppointmentUpdate(AppointmentBase):
 class Appointment(AppointmentBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

@@ -1,6 +1,5 @@
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from app.dependencies import get_current_user
 from app.routers import appointment_routers, auth_routers, patient_routers, provider_routers
 from app.db.session import init_db, SessionLocal
 import pandas as pd
@@ -36,7 +35,7 @@ async def lifespan(app: FastAPI):
 
         db.commit()
     finally:
-        db.close()  # Ensure session closes after import
+        db.close() 
 
     yield  
 

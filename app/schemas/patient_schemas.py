@@ -1,6 +1,6 @@
 from datetime import date
 from typing import List, Literal
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, ConfigDict
 from app.schemas.appointment_schemas import Appointment
 import re
 
@@ -16,7 +16,7 @@ class PatientBase(BaseModel):
         today = date.today()
         age = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
         if age < 0:
-            raise ValueError("date_of_birth cannot be in the future.")
+            raise ValueError("Date of birth cannot be in the future.")
         if age > 120:
             raise ValueError("Patient age cannot exceed 120 years.")
         return value
@@ -28,7 +28,7 @@ class PatientBase(BaseModel):
         phone_pattern = re.compile(r"^\+?1?\d{10,15}$")
         if not phone_pattern.match(value):
             raise ValueError(
-                "phone_number must be a valid phone number (e.g., +11234567890 or 1234567890)."
+                "Phone number must be a valid phone number (e.g., +11234567890 or 1234567890)."
             )
         return value
 
@@ -41,5 +41,4 @@ class Patient(PatientBase):
     id: int
     appointments: List[Appointment] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
