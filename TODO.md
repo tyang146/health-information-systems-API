@@ -1,5 +1,5 @@
 perspective of a hospital
-- [] add roles security
+- [ ] add roles security
   - allow for creation of providers
-- [] add medicine and medication
+- [ ] add medicine and medication
 - [x] test and validation check
