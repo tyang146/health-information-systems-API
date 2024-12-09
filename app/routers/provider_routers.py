@@ -14,7 +14,7 @@ def read_provider_by_id(provider_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Provider not found")
     return provider
 
-@router.get("/query_parameters_search/providers", response_model=list[Provider])
+@router.get("/", response_model=list[Provider])
 def read_providers(db: Session = Depends(get_db), name: str = None, specialty: str = None):
     providers = get_providers(db=db, name=name, specialty=specialty)
     if not providers:
